@@ -2,32 +2,70 @@ package bankaccountapp;
 
 public abstract class Account implements IBaseRate {
 	// List common properties for savings and checking accounts
-	String name;
-	String sSN;
-	double balance;
+	private String name;
+	private String sSN;
+	private double balance;
 
-	static int index = 1000;
-	String accountNumber;
-	double rate;
+	private static int index = 1000;
+	protected String accountNumber;
+	protected double rate;
 
 	// Constructor to set base properties and initialise the account
 	public Account(String name, String sSN, double initDeposit) {
 		this.name = name;
 		this.sSN = sSN;
 		balance = initDeposit;
-		System.out.println("NAME: " + name + " SSN: " + sSN + " BALANCE: £" + String.format("%.2f", balance));
 
 		// Set account number
 		index++;
 		this.accountNumber = setAccountNumber();
-		System.out.println("ACCOUNT NUMBER " + this.accountNumber);
+
+		setRate();
+
+	}
+
+	public abstract void setRate();
+
+	public void compound() {
+		double accruedInterest = balance * (rate / 100);
+		balance = balance + accruedInterest;
+		System.out.println("Accrued interest: £" + accruedInterest);
+		printBalance();
 	}
 
 	private String setAccountNumber() {
 		String lastTwoOfSSN = sSN.substring(sSN.length() - 2, sSN.length());
 		int uniqueID = index;
-		return lastTwoOfSSN + uniqueID;
+		int randomNumber = (int) (Math.random() * Math.pow(10, 3));
+		return lastTwoOfSSN + uniqueID + randomNumber;
 	}
 
-	// List common methods
+	// List common methods - transactions
+
+	public void deposit(double amount) {
+		balance = balance + amount;
+		System.out.println("Depositing £" + amount);
+		printBalance();
+	}
+
+	public void withdraw(double amount) {
+		balance = balance - amount;
+		System.out.println("Withdrawing £" + amount);
+		printBalance();
+	}
+
+	public void transfer(String toWhere, double amount) {
+		balance = balance - amount;
+		System.out.println("Transferring £" + amount + "to " + toWhere);
+		printBalance();
+	}
+
+	public void printBalance() {
+		System.out.println("Your balance is now £" + balance);
+	}
+
+	public void showInfo() {
+		System.out.println("NAMEL: " + name + "\nACCOUNT NUMBER: " + accountNumber + "\nBALANCE: £"
+				+ String.format("%.2f", balance) + "\nRate: " + rate + "%");
+	}
 }
